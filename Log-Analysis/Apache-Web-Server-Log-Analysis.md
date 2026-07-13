@@ -250,3 +250,9 @@ Investigation steps (to close gaps this log alone can't answer):
 
 Methodology note: every figure above was computed directly from the 2,000-line source file. Log-level counts, message-template counts, and hourly buckets were each independently summed and cross-checked against the total line count (2,000) as a completeness check. No entries were inferred, extrapolated, or invented. 
 
+
+---
+
+## Dataset Source
+
+[LogHub Apache Log Dataset](https://github.com/logpai/loghub)
