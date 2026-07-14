@@ -1,12 +1,12 @@
 # Hadoop MRAppMaster Log — Forensic & SOC Analysis
-**Source file:** `Hadoop_2k_log.txt` (1,999 lines, 384,948 bytes, CRLF)
-**Capture window:** 2015-10-18 18:01:47.978 → 18:10:55.202 (9 min 7 sec)
+- **Source dataset:** [Dataset](https://github.com/logpai/loghub)
+- **Capture window:** 2015-10-18 18:01:47.978 → 18:10:55.202 (9 min 7 sec)
 
 ---
 
 ## Executive Summary (TL;DR)
 
-This file is a **single Hadoop MapReduce ApplicationMaster (AM) log**, not a network/web/auth log — there are no IPs of external origin, no HTTP traffic, and no login events to threat-hunt against in the way the request template anticipates. The job (`job_1445144423722_0020`) starts cleanly and assigns all 10 map containers within 15 seconds. About **3.5 minutes in, the AM's connection to the cluster's master node (`msra-sa-41`) begins degrading**, and by minute 4.5 it fails outright with `NoRouteToHostException` — a network-layer fault, not an application or credential failure. Two map attempts fail as a direct result; one task had already succeeded; seven remain `RUNNING` when the excerpt ends. From that point until the log cuts off, the AM is stuck in a continuous reconnect loop, unable to reach the ResourceManager or renew its HDFS lease — **147 "ERROR IN CONTACTING RM" and 326 lease-renewal failures**, roughly one per second, with no recovery visible in the provided data.
+This log file is a **single Hadoop MapReduce ApplicationMaster (AM) log**, not a network/web/auth log — there are no IPs of external origin, no HTTP traffic, and no login events to threat-hunt against in the way the request template anticipates. The job (`job_1445144423722_0020`) starts cleanly and assigns all 10 map containers within 15 seconds. About **3.5 minutes in, the AM's connection to the cluster's master node (`msra-sa-41`) begins degrading**, and by minute 4.5 it fails outright with `NoRouteToHostException` — a network-layer fault, not an application or credential failure. Two map attempts fail as a direct result; one task had already succeeded; seven remain `RUNNING` when the excerpt ends. From that point until the log cuts off, the AM is stuck in a continuous reconnect loop, unable to reach the ResourceManager or renew its HDFS lease — **147 "ERROR IN CONTACTING RM" and 326 lease-renewal failures**, roughly one per second, with no recovery visible in the provided data.
 
 **No indicators of compromise were found.** Every IP is private/internal, there's no injection, brute-force, or recon signature, and the single keyword-sweep hit for "nmap" was verified to be a false positive (a coincidental substring inside Hadoop's own `DFSClient_NONMAPREDUCE_...` identifier, not a tool reference). This reads as an **internal network/infrastructure outage**, not a security incident — though the affected host's network health at 18:05–18:11 on 2015-10-18 is worth confirming.
 
