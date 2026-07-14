@@ -3,7 +3,7 @@
 This documentation is maintained in my Cybersecurity Learning Log repository.
 
 **Refer to the full documentation here:**
-[Lab Documentation](https://github.com/mikevaat/cybersecurity-learning-log/blob/main/CyberKill-Chain-lab-on-TryHackMe.md)
+[Lab Documentation](https://github.com/mikevaat/cybersecurity-learning-log/blob/main/Blue-Team-Operations/CyberKill-Chain-lab-on-TryHackMe.md)
 
 
 <br>
