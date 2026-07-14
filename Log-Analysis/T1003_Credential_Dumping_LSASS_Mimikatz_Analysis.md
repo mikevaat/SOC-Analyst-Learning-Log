@@ -1,6 +1,28 @@
-# Executive Summary
+# Windows EVTX Forensic Analysis: LSASS Credential Dumping & Mimikatz Activity
 
-This raw log data indicates a high-probability credential dumping incident on a Windows 10 host (`MSEDGEWIN10`). Following a standard interactive user logon sequence, the Local Security Authority Subsystem Service (`lsass.exe`) was observed writing a highly suspicious file named `mimilsa.log` into the `System32` directory. This activity is heavily correlated with in-memory credential extraction tools like Mimikatz. Immediately following or concurrently with this, a massive flood of Volume Shadow Copy (VSS) driver events occurred, suggesting the attacker may have also attempted to extract local registry hives (`SAM/SYSTEM`) or the `NTDS.dit` database via shadow copies.
+- **Author:** CypherX
+- **Category:** Windows Security / DFIR / SOC Analysis
+- **Source:** EVTX Attack Samples Repository
+- **Host Analyzed:** MSEDGEWIN10
+- **Operating System:** Windows 10
+- **Log Source:** [Dataset](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES?)
+- **MITRE ATT&CK Mapping:** T1003.001 — OS Credential Dumping: LSASS Memory
+- **Related Techniques:** T1003.002 — SAM Database | T1003.003 — NTDS | T1070.004 — File Deletion
+- **Severity:** Critical
+- **Analysis Type:** Endpoint Credential Theft Investigation  
+
+---
+
+## Executive Summary
+
+The analyzed Windows Event Log data indicates a high-probability credential dumping incident targeting the Local Security Authority Subsystem Service (`lsass.exe`) on the host **MSEDGEWIN10**.
+
+Following a successful interactive user logon, `lsass.exe` was observed creating a suspicious file named `mimilsa.log` within the protected `C:\Windows\System32\` directory. This behavior is strongly associated with credential extraction utilities such as Mimikatz, which commonly interact with LSASS memory to obtain authentication material.
+
+Immediately following this activity, a large volume of Microsoft-Windows-VolumeSnapshot-Driver events was observed, indicating potential abuse of Volume Shadow Copy technology to access protected credential databases such as the SAM, SYSTEM, SECURITY registry hives, or potentially the NTDS database.
+
+The combined evidence suggests a likely credential theft operation involving LSASS access followed by attempts to obtain offline credential stores.
+
 
 ---
 
@@ -85,11 +107,4 @@ Based strictly on the provided logs, the following hypotheses are formed:
 ### Security Hardening Recommendations:
 - Enable Windows Defender Credential Guard to protect `lsass.exe` from memory reads.
 - Implement ASR (Attack Surface Reduction) rules to block credential stealing from the Windows local security authority subsystem.
-
-
----
-
-# Dataset Source
-
-[LogHub Apache Log Dataset](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES?)
 
