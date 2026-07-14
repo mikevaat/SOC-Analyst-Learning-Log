@@ -1,7 +1,28 @@
-# Executive Summary
+# Windows EVTX Forensic Analysis: Cscript-Based LSASS Credential Dumping Attempt
 
-A forensic analysis of the provided data reveals a critical security anomaly indicative of an attempted credential dumping operation. The analyzed data consists of raw, unparsed binary fragments from a Windows Event Log (`.evtx`). The parsed strings reveal that the command-line scripting utility `cscript.exe` attempted to request an extensive set of highly privileged access rights—most notably memory read access—to the Local Security Authority Subsystem Service (`lsass.exe`). Because `lsass.exe` manages system credentials, access requests of this nature from a script engine are highly anomalous and represent a severe indicator of compromise (IoC).
+- **Author:** CypherX
+- **Category:** Windows Security / DFIR / SOC Analysis
+- **Source:** EVTX Attack Samples Repository
+- **Host Analyzed:** MSEDGEWIN10
+- **User Context:** IEUser
+- **Operating System:** Windows
+- **Log Source:** [Dataset](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES?)
+- **MITRE ATT&CK Mapping:** T1003.001 — OS Credential Dumping: LSASS Memory
+- **Related Techniques:** T1059.005 — Visual Basic | T1059 — Command and Scripting Interpreter
+- **Severity:** Critical
+- **Analysis Type:** Endpoint Credential Access Investigation  
 
+---
+
+## Executive Summary
+
+The analyzed Windows Event Log fragment reveals a critical security anomaly consistent with an attempted credential dumping operation targeting the Local Security Authority Subsystem Service (`lsass.exe`).
+
+The raw EVTX data indicates that the Windows Script Host process (`cscript.exe`) running under the `IEUser` account requested extensive access permissions against the protected `lsass.exe` process. The requested permissions include `PROCESS_VM_READ`, which allows memory contents to be read from another process.
+
+Because LSASS stores sensitive authentication material, including credential hashes and authentication tokens, unauthorized memory access attempts from script interpreters represent a significant indicator of compromise.
+
+The behavior strongly aligns with credential access techniques such as Mimikatz-style LSASS memory extraction or custom scripting-based credential dumping tools. Further investigation of the script executed by `cscript.exe`, process creation telemetry, and volatile memory is required to confirm the full attack chain.
 # 1. Pre-Analysis Phase
 
 ### Log Classification
@@ -84,10 +105,3 @@ Due to the raw nature of the data and the binary encoding of the TimeCreated and
 ### Security Hardening
 - **LSA Protection:** Ensure that RunAsPPL (Protected Process Light) is enabled for LSASS to prevent non-protected processes from requesting `PROCESS_VM_READ`. 
 - **Script Control:** Implement Windows Defender Application Control (`WDAC`) or AppLocker rules to restrict the execution of Windows Script Host (`cscript.exe / wscript.exe`) unless explicitly required and signed by a trusted certificate.
-
-
----
-
-# Dataset Source
-
-[LogHub Apache Log Dataset](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES?)
