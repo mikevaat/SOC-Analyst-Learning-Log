@@ -96,7 +96,7 @@ An attacker or automated exploit script executed a Local Privilege Escalation (L
 
 # Dataset Source
 
-[LogHub Apache Log Dataset](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES?)
+[Dataset](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES?)
 
 
 
